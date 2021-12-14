@@ -62,7 +62,7 @@ SendAssetsEntry::SendAssetsEntry(const PlatformStyle *_platformStyle, const QStr
     connect(ui->deleteButton_s, SIGNAL(clicked()), this, SLOT(deleteClicked()));
     connect(ui->assetSelectionBox, SIGNAL(activated(int)), this, SLOT(onAssetSelected(int)));
     connect(ui->administratorCheckbox, SIGNAL(clicked()), this, SLOT(onSendOwnershipChanged()));
-
+    connect(ui->setMaxBalance, SIGNAL(clicked()), this, SLOT(setMaxBalance()));
     ui->administratorCheckbox->setToolTip(tr("Select to view administrator assets to transfer"));
 
     /** Setup the asset list combobox */
@@ -455,12 +455,14 @@ void SendAssetsEntry::onAssetSelected(int index)
         ui->payAssetAmount->setSingleStep(1);
         ui->payAssetAmount->setDisabled(false);
         ui->payAssetAmount->setValue(0);
+        ui->setMaxBalance->setDisabled(false);
     }
     // If it is messanger channel set amount to 1 and keep locked.
     if (fIsMessengerAsset) {
         ui->payAssetAmount->setUnit(asset.units);
         ui->payAssetAmount->setDisabled(true);
         ui->payAssetAmount->setValue(1);
+        ui->setMaxBalance->setDisabled(true);
     }
 }
 
@@ -568,4 +570,13 @@ bool SendAssetsEntry::eventFilter(QObject *object, QEvent *event)
         ui->memoBox->setStyleSheet("");
     }
     return QWidget::eventFilter(object, event);
+}
+
+void SendAssetsEntry::setMaxBalance()
+{
+    QRegExp amountRegEx("[0-9]+");
+    int pos = amountRegEx.indexIn(ui->assetAmountLabel->text());
+    if(pos > -1){
+        ui->payAssetAmount->setValue(amountRegEx.cap(0).toInt());
+    }
 }

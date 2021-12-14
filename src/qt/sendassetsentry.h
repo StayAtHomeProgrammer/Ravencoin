@@ -82,6 +82,7 @@ private Q_SLOTS:
     void on_pasteButton_clicked();
     void onAssetSelected(int index);
     void onSendOwnershipChanged();
+    void setMaxBalance();
 
 private:
     SendAssetsRecipient recipient;
