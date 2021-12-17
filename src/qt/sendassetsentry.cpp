@@ -62,7 +62,7 @@ SendAssetsEntry::SendAssetsEntry(const PlatformStyle *_platformStyle, const QStr
     connect(ui->deleteButton_s, SIGNAL(clicked()), this, SLOT(deleteClicked()));
     connect(ui->assetSelectionBox, SIGNAL(activated(int)), this, SLOT(onAssetSelected(int)));
     connect(ui->administratorCheckbox, SIGNAL(clicked()), this, SLOT(onSendOwnershipChanged()));
-    connect(ui->setMaxBalance, SIGNAL(clicked()), this, SLOT(setMaxBalance()));
+    connect(ui->maxPayButton, SIGNAL(clicked()), this, SLOT(setMaxBalance()));
     ui->administratorCheckbox->setToolTip(tr("Select to view administrator assets to transfer"));
 
     /** Setup the asset list combobox */
@@ -378,6 +378,7 @@ void SendAssetsEntry::onAssetSelected(int index)
 //            ui->payAssetAmount->setDisabled(false);
         ui->payAssetAmount->clear();
         ui->payAssetAmount->setDisabled(true);
+        ui->maxPayButton->setDisabled(true);
         return;
     }
 
@@ -406,6 +407,7 @@ void SendAssetsEntry::onAssetSelected(int index)
         ui->messageTextLabel->show();
         ui->messageTextLabel->setText(tr("Failed to get asset metadata for: ") + name + "." + tr(" The transaction in which the asset was issued must be mined into a block before you can transfer it"));
         ui->assetAmountLabel->clear();
+        ui->maxPayButton->setDisabled(true);
         return;
     }
 
@@ -427,6 +429,7 @@ void SendAssetsEntry::onAssetSelected(int index)
         ui->messageLabel->show();
         ui->messageTextLabel->show();
         ui->messageTextLabel->setText(tr("Failed to get asset outpoints from database"));
+        ui->maxPayButton->setDisabled(true);
         return;
     }
 
@@ -455,14 +458,14 @@ void SendAssetsEntry::onAssetSelected(int index)
         ui->payAssetAmount->setSingleStep(1);
         ui->payAssetAmount->setDisabled(false);
         ui->payAssetAmount->setValue(0);
-        ui->setMaxBalance->setDisabled(false);
+        ui->maxPayButton->setEnabled(true);
     }
     // If it is messanger channel set amount to 1 and keep locked.
     if (fIsMessengerAsset) {
         ui->payAssetAmount->setUnit(asset.units);
         ui->payAssetAmount->setDisabled(true);
         ui->payAssetAmount->setValue(1);
-        ui->setMaxBalance->setDisabled(true);
+        ui->maxPayButton->setEnabled(false);
     }
 }
 
@@ -537,6 +540,7 @@ void SendAssetsEntry::switchAdministratorList(bool fSwitchStatus)
         ui->ownershipWarningMessage->setText(tr("Warning: Transferring administrator asset"));
         ui->ownershipWarningMessage->setStyleSheet("color: red");
         ui->ownershipWarningMessage->show();
+        ui->maxPayButton->setEnabled(false);
     } else {
         ui->administratorCheckbox->setChecked(false);
         if (!AssetControlDialog::assetControl->HasAssetSelected()) {
@@ -559,6 +563,7 @@ void SendAssetsEntry::switchAdministratorList(bool fSwitchStatus)
             ui->payTo->setFocus();
         }
         ui->ownershipWarningMessage->hide();
+        //ui->maxPayButton->setEnabled(true);
     }
 }
 

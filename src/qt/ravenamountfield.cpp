@@ -351,7 +351,7 @@ AssetAmountField::AssetAmountField(QWidget *parent) :
 
     QHBoxLayout *layout = new QHBoxLayout(this);
     layout->addWidget(amount);
-    layout->addStretch(1);
+    layout->addSpacing(10);
     layout->setContentsMargins(0,0,0,0);
 
     setLayout(layout);
